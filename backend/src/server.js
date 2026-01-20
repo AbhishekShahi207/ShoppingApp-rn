@@ -1,11 +1,27 @@
 import express from "express"
+import path from "path"
+import { ENV } from "./config/env.js"
 
 const app = express()
+
+const __dirname=path.resolve()
+
 
 app.get("/",(req,res)=>{
     res.send(":Hii")
 })
 
-app.listen(3000,()=>{
-    console.log("server is Runing")
+// serving react in backend , to deploy backend
+if(ENV.NODE_ENV === "production"){
+    app.use(express.static(path.join(__dirname,"../admin/dist")))
+
+    app.get("/{*any}",(req,res)=>{
+        res.sendFile(path.join(__dirname,"../admin","dist","index.html"))
+    })
+}
+
+
+
+app.listen(ENV.PORT,()=>{
+    console.log("server is Runing",ENV.PORT)
 })
